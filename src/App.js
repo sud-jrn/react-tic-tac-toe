@@ -21,9 +21,9 @@ function Board({xIsNext, squares, onPlay}) {
   const winner = calculateWinner(squares);
   let status;
   if (winner) {
-    status = 'Winner: ' + winner;
+    status = `${winner}が勝利しました！`;
   } else {
-    status = 'Next player: ' + (xIsNext ? 'X' : 'O');
+    status = `次のプレイヤー: ${xIsNext ? 'X' : 'O'}`;
   }
 
   return (
@@ -62,7 +62,7 @@ export default function Game() {
     setCurrentMove(nextMove);
   }
   const moves = history.map((squares, move) => {
-    const description = move > 0 ? 'Go to move #' + move : 'Go to game start';
+    const description = move > 0 ? `${move}つめの手番に移動` : 'ゲームの最初に移動';
     return (
       <li key={move}>
         <button onClick={() => jumpTo(move)}>{description}</button>
