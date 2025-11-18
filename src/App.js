@@ -8,6 +8,12 @@ function Square({value, onSquareClick}) {
   );
 }
 
+function getSquareCoordinate(index) {
+  const row = Math.floor(index / 3) + 1;
+  const col = (index % 3) + 1;
+  return { row, col };
+}
+
 function Board({xIsNext, squares, onPlay}) {
   function handleClick(i) {
     if (calculateWinner(squares) || squares[i]) {
@@ -15,7 +21,8 @@ function Board({xIsNext, squares, onPlay}) {
     }
     const nextSquares = squares.slice();
     nextSquares[i] = xIsNext ? 'X' : 'O';
-    onPlay(nextSquares);
+    const squareLocation = getSquareCoordinate(i);
+    onPlay(nextSquares, squareLocation);
   }
 
   const winner = calculateWinner(squares);
@@ -49,20 +56,21 @@ function Board({xIsNext, squares, onPlay}) {
 }
 
 export default function Game() {
-  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const [history, setHistory] = useState([{ squares: Array(9).fill(null), location: null }]);
   const [currentMove, setCurrentMove] = useState(0);
   const xIsNext = currentMove % 2 === 0;
-  const currentSquares = history[currentMove];
-  function handlePlay(nextSquares) {
-    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+  const currentSquares = history[currentMove].squares;
+  function handlePlay(nextSquares, squareLocation) {
+    const nextHistory = [...history.slice(0, currentMove + 1), { squares: nextSquares, location: squareLocation }];
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
   } 
   function jumpTo(nextMove) {
     setCurrentMove(nextMove);
   }
-  const moves = history.map((squares, move) => {
-    const description = move > 0 ? `${move}つめの手番` : 'ゲームの最初';
+  const moves = history.map((step, move) => {
+    const locationLabel = step.location ? `(${step.location.row}, ${step.location.col})` : '';
+    const description = move > 0 ? `${move}つめの手番${locationLabel ? ` ${locationLabel}` : ''}` : 'ゲームの最初';
     const isCurrent = move === currentMove;
     let content;
     if(isCurrent) {
