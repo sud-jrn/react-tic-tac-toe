@@ -62,11 +62,16 @@ export default function Game() {
     setCurrentMove(nextMove);
   }
   const moves = history.map((squares, move) => {
-    const description = move > 0 ? `${move}つめの手番に移動` : 'ゲームの最初に移動';
+    const description = move > 0 ? `${move}つめの手番` : 'ゲームの最初';
+    const isCurrent = move === currentMove;
+    let content;
+    if(isCurrent) {
+      content = <div>{description}</div>;
+    } else {
+      content = <div><button onClick={() => jumpTo(move)}>{description}</button>に移動</div>;
+    }
     return (
-      <li key={move}>
-        <button onClick={() => jumpTo(move)}>{description}</button>
-      </li>
+      <li key={move}>{content}</li>
     );
   });
   return (
